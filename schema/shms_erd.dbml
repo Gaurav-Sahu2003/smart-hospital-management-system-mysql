@@ -1,0 +1,136 @@
+Table Users {
+  user_id int [pk]
+  name varchar
+  email varchar [unique]
+  password_hash varchar
+  role enum
+}
+
+Table Patients {
+  patient_id int [pk]
+  user_id int [ref: > Users.user_id]
+  name varchar
+  dob date
+  gender enum
+  contact varchar
+  address text
+  blood_group varchar
+  emergency_contact varchar
+}
+
+Table Doctors {
+  doctor_id int [pk]
+  user_id int [ref: > Users.user_id]
+  name varchar
+  specialization varchar
+  contact varchar
+  available_hours varchar
+}
+
+Table Staff {
+  staff_id int [pk]
+  name varchar
+  role varchar
+  shift varchar
+  contact varchar
+}
+
+Table Appointments {
+  appointment_id int [pk]
+  patient_id int [ref: > Patients.patient_id]
+  doctor_id int [ref: > Doctors.doctor_id]
+  appointment_datetime datetime
+  duration_minutes int
+  status enum
+}
+
+Table Billing {
+  bill_id int [pk]
+  patient_id int [ref: > Patients.patient_id]
+  appointment_id int [ref: > Appointments.appointment_id]
+  total_amount decimal
+  discount decimal
+  payment_status enum
+  payment_mode enum
+}
+
+Table Insurance {
+  insurance_id int [pk]
+  patient_id int [ref: > Patients.patient_id]
+  provider varchar
+  policy_number varchar
+}
+
+Table Medicines {
+  medicine_id int [pk]
+  name varchar
+  brand varchar
+  expiry_date date
+  stock int
+  price decimal
+}
+
+Table Pharmacy_Sales {
+  sale_id int [pk]
+  patient_id int [ref: > Patients.patient_id]
+  medicine_id int [ref: > Medicines.medicine_id]
+  quantity int
+  sale_date datetime
+}
+
+Table Restock_Alerts {
+  alert_id int [pk]
+  medicine_id int [ref: > Medicines.medicine_id]
+  current_stock int
+  threshold int
+}
+
+Table Lab_Tests {
+  test_id int [pk]
+  test_name varchar
+  cost decimal
+  normal_range varchar
+}
+
+Table Patient_Tests {
+  test_record_id int [pk]
+  patient_id int [ref: > Patients.patient_id]
+  test_id int [ref: > Lab_Tests.test_id]
+  doctor_id int [ref: > Doctors.doctor_id]
+  result varchar
+  test_date datetime
+}
+
+Table Wards {
+  ward_id int [pk]
+  name varchar
+  type varchar
+  capacity int
+  available_beds int
+}
+
+Table Admissions {
+  admission_id int [pk]
+  patient_id int [ref: > Patients.patient_id]
+  ward_id int [ref: > Wards.ward_id]
+  admission_date datetime
+  discharge_date datetime
+  status enum
+}
+
+Table Medical_History {
+  history_id int [pk]
+  patient_id int [ref: > Patients.patient_id]
+  doctor_id int [ref: > Doctors.doctor_id]
+  disease varchar
+  diagnosis_date date
+  treatment text
+}
+
+Table Medical_History_Audit {
+  audit_id int [pk]
+  history_id int [ref: > Medical_History.history_id]
+  patient_id int [ref: > Patients.patient_id]
+  action varchar
+  changed_on datetime
+}
